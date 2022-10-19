@@ -6,19 +6,17 @@ from torch.utils.data import DataLoader
 from torchvision import datasets
 from torchvision.transforms import ToTensor
 
-from __future__ import print_function
-import argparse
+
 import torch
 import torch.utils.data
 from torch import nn, optim
 from torch.nn import functional as F
 from torchvision import datasets, transforms
 from torchvision.utils import save_image
-import time 
 
 params = {
     'features1': 400,
-    'featrues2': 20,
+    'features2': 20,
     'lr': 0.001,
     'epsilon': 1e-07,
 }
@@ -92,11 +90,6 @@ class VAE(nn.Module):
 # Reconstruction + KL divergence losses summed over all elements and batch
 def loss_function(recon_x, x, mu, logvar):
     BCE = F.binary_cross_entropy(recon_x, x.view(-1, 784), reduction='sum')
-
-    # see Appendix B from VAE paper:
-    # Kingma and Welling. Auto-Encoding Variational Bayes. ICLR, 2014
-    # https://arxiv.org/abs/1312.6114
-    # 0.5 * sum(1 + log(sigma^2) - mu^2 - sigma^2)
     KLD = -0.5 * torch.sum(1 + logvar - mu.pow(2) - logvar.exp())
 
     return BCE + KLD
@@ -145,18 +138,18 @@ def test(epoch):
 
 
 model = VAE().to(device)
-optimizer = optim.Adam(model.parameters(), lr=1e-3)
+optimizer = optim.Adam(model.parameters(), lr=params['lr'],epsilon = params['epsilon'])
 
 
 for epoch in range(1, args.epochs + 1):
-        train(epoch)
-        loss = test(epoch)
-        nni.report_intermediate_result(loss)
-        with torch.no_grad():
-            sample = torch.randn(64, 20).to(device)
-            sample = model.decode(sample).cpu()
-            save_image(sample.view(64, 1, 28, 28),
-                       'sample_' + str(epoch) + '.png')
+    train(epoch)
+    loss = test(epoch)
+    nni.report_intermediate_result(loss)
+    with torch.no_grad():
+        sample = torch.randn(64, 20).to(device)
+        sample = model.decode(sample).cpu()
+        save_image(sample.view(64, 1, 28, 28),
+                    'sample_' + str(epoch) + '.png')
 nni.report_final_result(loss)
             
 
