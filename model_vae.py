@@ -41,13 +41,15 @@ kwargs = {'num_workers': 1, 'pin_memory': True} if args.cuda else {}
 
 batch_size = 64
 
-train_loader = torch.utils.data.DataLoader(
-    datasets.MNIST('../data', train=True, download=True,
-                   transform=transforms.ToTensor()),
-    batch_size=args.batch_size, shuffle=True, **kwargs)
-test_loader = torch.utils.data.DataLoader(
-    datasets.MNIST('../data', train=False, transform=transforms.ToTensor()),
-    batch_size=args.batch_size, shuffle=True, **kwargs)
+train_loader = torch.utils.data.DataLoader(datasets.MNIST('../data',
+                                                          train=True, 
+                                                          download=True,
+                                                          transform=transforms.ToTensor()),
+                                           batch_size=args.batch_size, shuffle=True, **kwargs)
+test_loader = torch.utils.data.DataLoader(datasets.MNIST('../data',
+                                                         train=False,
+                                                         transform=transforms.ToTensor()),
+                                          batch_size=args.batch_size, shuffle=True, **kwargs)
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 print(f"Using {device} device")
@@ -57,7 +59,6 @@ print(f"Using {device} device")
 class VAE(nn.Module):
     def __init__(self):
         super(VAE, self).__init__()
-
         self.fc1 = nn.Linear(784, params['features1'])
         self.fc21 = nn.Linear(params['features1'], params['features2'])
         self.fc22 = nn.Linear(params['features1'], params['features2'])
