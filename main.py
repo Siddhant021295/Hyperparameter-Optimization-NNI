@@ -15,7 +15,7 @@ if __name__ == "__main__":
 
         experiment = Experiment('local')
 
-        experiment.config.trial_command = 'python3 model_vae.py'
+        experiment.config.trial_command = 'python3 model.py'
         experiment.config.trial_code_directory = '.'
 
         experiment.config.search_space = search_space
