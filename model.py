@@ -7,7 +7,6 @@ from torchvision import datasets
 from torchvision.transforms import ToTensor
 
 
-import torch
 import torch.utils.data
 from torch import nn, optim
 from torch.nn import functional as F
@@ -59,11 +58,11 @@ print(f"Using {device} device")
 class VAE(nn.Module):
     def __init__(self):
         super(VAE, self).__init__()
-        self.fc1 = nn.Linear(784, 500)
-        self.fc21 = nn.Linear(500, 10)
-        self.fc22 = nn.Linear(500, 10)
-        self.fc3 = nn.Linear(10, 500)
-        self.fc4 = nn.Linear(500, 784)
+        self.fc1 = nn.Linear(784, params['features1'])
+        self.fc21 = nn.Linear(params['features1'], params['features2'])
+        self.fc22 = nn.Linear(params['features1'], params['features2'])
+        self.fc3 = nn.Linear(params['features2'], params['features1'])
+        self.fc4 = nn.Linear(params['features1'], 784)
         self.relu1 = torch.nn.ReLU6()
         self.relu2 = torch.nn.ReLU6()
 
@@ -147,7 +146,7 @@ for epoch in range(1, args.epochs + 1):
     loss = test(epoch)
     nni.report_intermediate_result(loss)
     with torch.no_grad():
-        sample = torch.randn(64, 20).to(device)
+        sample = torch.randn(64, params['features2']).to(device)
         sample = model.decode(sample).cpu()
         save_image(sample.view(64, 1, 28, 28),
                     'sample_' + str(epoch) + '.png')
