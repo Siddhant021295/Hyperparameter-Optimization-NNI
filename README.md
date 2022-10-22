@@ -19,7 +19,7 @@ Running on different configuaration and hyperparameter optimizer technique
 
 The result will be stored in nni-experiments folder.
 
-4. Project Learnings
+### Project Learnings
 
 Optimal Loss Comparison Table
 
